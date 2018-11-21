@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<meta http-equiv="Content-Type" content="http-header; charset=utf-8" />
+<meta name="viewport" content="width=50, initial-scale=2">
+<input type="checkbox" id="keittio"> <div id="ch1" style="display: inline;"> keittiö </div>  <br>
+<input type="checkbox" id="makuuhuone"> <div id="ch2" style="display: inline;"> makuuhuone </div> <br>
+<input type="checkbox" id="kuisti"> <div id="ch3" style="display: inline;"> kuisti </div> <br>
+<button id="ping"> Ping </button> <br>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script>
+
+<script type="text/javascript">
+
+  var socket = io.connect('http://192.168.0.13');
+
+  socket.on('connect', function (data) {
+
+    socket.on('keittioMuuttuja1', function (data) {
+      document.getElementById('keittio').checked = true;
+      document.getElementById('ch1').style.color = "green";
+
+    });
+
+    socket.on('keittioMuuttuja0', function (data) {
+      document.getElementById('keittio').checked = false;
+
+    });
+
+    socket.on('makuuhuoneMuuttuja1', function (data) {
+      document.getElementById('makuuhuone').checked = true;
+      document.getElementById('ch2').style.color = "green";
+
+    });
+
+    socket.on('makuuhuoneMuuttuja0', function (data) {
+      document.getElementById('makuuhuone').checked = false;
+
+    });
+
+    socket.on('kuistiMuuttuja1', function (data) {
+      document.getElementById('kuisti').checked = true;
+      document.getElementById('ch3').style.color = "green";
+
+    });
+
+    socket.on('kuistiMuuttuja0', function (data) {
+      document.getElementById('kuisti').checked = false;
+
+    });
+
+
+    socket.on('pingVastaus', function (data) {
+      var aika2 = new Date().getMilliseconds();
+      var tulos = aika2 - data;
+
+
+      window.alert("kulunut aika: selain-avr-selain: "+ tulos+'ms');
+
+    });
+
+
+});
+
+    // keittio
+  document.getElementById("keittio").onclick = () =>
+  {
+    if (document.getElementById("keittio").checked)
+      {
+      socket.emit('keittio paalle', { slkeittio: '1' });
+      }
+    else
+      {
+        socket.emit('keittio pois', { slkeittio: '0'});
+      }
+  }
+
+    //kuisti
+    document.getElementById("kuisti").onclick = () =>
+    {
+      if (document.getElementById("kuisti").checked)
+      {
+        socket.emit('kuisti paalle', { slkuisti: '1' });
+      }
+      else
+      {
+        socket.emit('kuisti pois', { slkuisti: '0'});
+      }
+    }
+    //makuuhuone
+    document.getElementById("makuuhuone").onclick = () =>
+    {
+      if (document.getElementById("makuuhuone").checked)
+      {
+        socket.emit('makuuhuone paalle', { slmakuuhuone: '1' });
+      }
+      else
+      {
+        socket.emit('makuuhuone pois', { slmakuuhuone: '0'});
+      }
+    }
+
+    document.getElementById("ping").onclick = () =>
+    {
+        var millis = new Date().getMilliseconds();
+        socket.emit('pingSocket', new Date().getMilliseconds());
+    }
+</script>
+
+</body>
+</html>
